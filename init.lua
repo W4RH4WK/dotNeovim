@@ -70,7 +70,7 @@ packer.startup(function(use)
 	use 'tpope/vim-repeat'
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
-	use {'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end}
+	use {'terrortylor/nvim-comment', config = 'require("nvim_comment").setup()'}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
 	---- Syntax
