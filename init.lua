@@ -79,6 +79,11 @@ packer.startup(function(use)
 
 	---- Formatting
 	use 'editorconfig/editorconfig-vim'
+	use {'vim-autoformat/vim-autoformat',
+		config = function()
+			vim.api.nvim_set_keymap('n', '<leader>a', '<cmd>Autoformat<cr>', {noremap = true})
+		end
+	}
 
 	---- Telescope
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}},
