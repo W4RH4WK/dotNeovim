@@ -87,6 +87,7 @@ packer.startup(function(use)
 
 	---- Telescope
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}},
+		commit = "80cdb00b221f69348afc4fb4b701f51eb8dd3120",
 		config = function()
 			require('telescope').setup {
 				defaults = {
