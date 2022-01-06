@@ -20,6 +20,9 @@ vim.opt.formatoptions = 'cjqrt'
 vim.opt.mouse = 'a'
 vim.opt.joinspaces = false
 
+-- Encoding
+vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
+
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -41,7 +44,7 @@ vim.api.nvim_set_keymap('n', '<c-l>', '<c-w>l', {noremap = true})
 vim.api.nvim_set_keymap('v', '@', '<cmd>normal @', {noremap = true, silent = true})
 
 -- Toggle auto wordwrap
-vim.api.nvim_set_keymap('n', 'yof', '<cmd>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>', {noremap = true})
 
 -- Smarttab
 vim.api.nvim_set_keymap('i', '<S-TAB>', '<TAB>', {noremap = true})
@@ -50,6 +53,22 @@ vim.api.nvim_set_keymap('i', '<TAB>', '<C-R>=SmartTab()<CR>', {noremap = true, s
 -- Trim trailing whitespace
 vim.api.nvim_set_keymap('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>', {noremap = true})
 
+-- Terminal
+vim.api.nvim_set_keymap('n', '<leader>x', '<cmd>:terminal<CR>', {noremap = true})
+vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>', {noremap = true})
+
+-- Encoding
+vim.api.nvim_set_keymap('n', '<leader>j', ':e ++enc=cp932', {noremap = true})
+
+-- Sidebar
+vim.g.netrw_banner = false
+vim.g.netrw_winsize = 25
+vim.g.netrw_liststyle = 3
+vim.g.netrw_browse_split = 4
+vim.g.netrw_altv = 1
+vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>Lexplore<CR>', {noremap = true})
+
+-- Packages
 vim.cmd([[
 	augroup packer_user_config
 		autocmd!
@@ -66,11 +85,11 @@ packer.startup(function(use)
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
 
 	---- Handling
-	use 'rhysd/clever-f.vim'
 	use 'tpope/vim-repeat'
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
-	use {'terrortylor/nvim-comment', config = 'require("nvim_comment").setup()'}
+	use 'mg979/vim-visual-multi'
+	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()'}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
 	---- Syntax
@@ -87,7 +106,6 @@ packer.startup(function(use)
 
 	---- Telescope
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}},
-		commit = "80cdb00b221f69348afc4fb4b701f51eb8dd3120",
 		config = function()
 			require('telescope').setup {
 				defaults = {
@@ -103,9 +121,24 @@ packer.startup(function(use)
 			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', {noremap = true})
 			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files hidden=true no_ignore=true<cr>', {noremap = true})
 			vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>Telescope live_grep<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files<cr>', {noremap = true})
+		end
+	}
+
+	-- Toggleterm
+	use {'akinsho/toggleterm.nvim',
+		config = function()
+			require('toggleterm').setup({
+					open_mapping = [[<c-\>]],
+					direction = 'float',
+					float_opts = {
+						border = 'curved'
+					}
+				})
 		end
 	}
 
 	---- Completion
-	use 'neovim/nvim-lspconfig'
+	--use 'neovim/nvim-lspconfig'
+	
 end)
