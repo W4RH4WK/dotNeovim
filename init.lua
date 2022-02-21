@@ -84,7 +84,8 @@ packer.startup(function(use)
 	use {'jacoborus/tender.vim', config = 'vim.cmd[[colorscheme tender]]'}
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
 
-	---- Handling
+	-- Handling
+	use 'editorconfig/editorconfig-vim'
 	use 'tpope/vim-repeat'
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
@@ -93,19 +94,11 @@ packer.startup(function(use)
 	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()'}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
-	---- Syntax
+	-- Syntax
 	use 'nvim-treesitter/nvim-treesitter'
 	use 'sheerun/vim-polyglot'
 
-	---- Formatting
-	use 'editorconfig/editorconfig-vim'
-	use {'vim-autoformat/vim-autoformat',
-		config = function()
-			vim.api.nvim_set_keymap('n', '<leader>a', '<cmd>Autoformat<cr>', {noremap = true})
-		end
-	}
-
-	---- Telescope
+	-- Telescope
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}},
 		config = function()
 			require('telescope').setup {
@@ -139,6 +132,17 @@ packer.startup(function(use)
 		end
 	}
 
-	---- Completion
-	--use 'neovim/nvim-lspconfig'
+	-- LSP
+	use 'neovim/nvim-lspconfig'
+	use {'jose-elias-alvarez/null-ls.nvim',
+		config = function()
+			local null_ls = require('null-ls')
+			null_ls.setup({
+					sources = {
+						null_ls.builtins.formatting.clang_format
+					}
+				})
+			vim.api.nvim_set_keymap('n', '<leader>a', '<cmd>lua vim.lsp.buf.formatting()<cr>', {noremap = true})
+		end
+	}
 end)
