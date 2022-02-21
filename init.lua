@@ -89,6 +89,7 @@ packer.startup(function(use)
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
 	use 'mg979/vim-visual-multi'
+	use 'chamindra/marvim'
 	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()'}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
@@ -140,5 +141,4 @@ packer.startup(function(use)
 
 	---- Completion
 	--use 'neovim/nvim-lspconfig'
-	
 end)
