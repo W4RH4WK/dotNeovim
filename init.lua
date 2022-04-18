@@ -27,6 +27,10 @@ vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
+-- Notes
+vim.api.nvim_set_keymap('n', '<F1>', '<cmd>:help notes<cr>', {noremap = true})
+vim.api.nvim_set_keymap('i', '<F1>', '<Nop>', {noremap = true})
+
 -- Disable Ex mode
 vim.api.nvim_set_keymap('n', 'Q', '<Nop>', {noremap = true})
 
@@ -61,12 +65,12 @@ vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>', {noremap = true})
 vim.api.nvim_set_keymap('n', '<leader>j', ':e ++enc=cp932', {noremap = true})
 
 -- Sidebar
-vim.g.netrw_banner = false
-vim.g.netrw_winsize = 25
-vim.g.netrw_liststyle = 3
-vim.g.netrw_browse_split = 4
-vim.g.netrw_altv = 1
-vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>Lexplore<CR>', {noremap = true})
+-- vim.g.netrw_banner = false
+-- vim.g.netrw_winsize = 25
+-- vim.g.netrw_liststyle = 3
+-- vim.g.netrw_browse_split = 4
+-- vim.g.netrw_altv = 1
+-- vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>Lexplore<CR>', {noremap = true})
 
 -- Packages
 vim.cmd([[
@@ -91,7 +95,10 @@ packer.startup(function(use)
 	use 'tpope/vim-unimpaired'
 	use 'mg979/vim-visual-multi'
 	use 'chamindra/marvim'
-	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()'}
+	use {'numToStr/Comment.nvim',
+		tag = 'v0.6',
+		config = 'require("Comment").setup()'
+	}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
 	-- Syntax
@@ -99,7 +106,11 @@ packer.startup(function(use)
 	use 'sheerun/vim-polyglot'
 
 	-- Telescope
-	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}},
+	use {'nvim-telescope/telescope.nvim',
+		requires = {
+			{'nvim-lua/plenary.nvim'},
+			{'nvim-telescope/telescope-fzy-native.nvim'},
+		},
 		config = function()
 			require('telescope').setup {
 				defaults = {
@@ -109,13 +120,21 @@ packer.startup(function(use)
 							['<C-k>'] = 'move_selection_previous',
 						}
 					}
+				},
+				extensions = {
+					fzy_native = {
+						override_generic_sorter = false,
+						override_file_sorter = true,
+					}
 				}
 			}
+			require('telescope').load_extension('fzy_native')
 			vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files hidden=true no_ignore=true<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files find_command=fd previewer=false<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files find_command=fd previewer=false hidden=true no_ignore=true<cr>', {noremap = true})
 			vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>Telescope live_grep<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>G', '<cmd>Telescope grep_string<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files previewer=false<cr>', {noremap = true})
 		end
 	}
 
@@ -129,6 +148,48 @@ packer.startup(function(use)
 						border = 'curved'
 					}
 				})
+		end
+	}
+
+	-- Sidebar
+	use {'kyazdani42/nvim-tree.lua',
+		config = function()
+			vim.g.nvim_tree_show_icons = {
+				folders = 1,
+				files = 0,
+				git = 0,
+				folder_arrows = 0,
+			}
+			vim.g.nvim_tree_icons = {
+				folder = {
+					arrow_open = "▾",
+					arrow_closed = "▸",
+					default = "▸",
+					open =  "▾",
+					empty = "▸",
+					empty_open = "▾",
+					symlink = "▸",
+					symlink_open = "▾",
+				},
+			}
+			local tree_cb = require('nvim-tree.config').nvim_tree_callback
+			require('nvim-tree').setup({
+					renderer = {
+						indent_markers = {
+							enable = true,
+						},
+					},
+					view = {
+						mappings = {
+							custom_only = false,
+							list = {
+								{ key = 's', action = '' },
+								{ key = '<C-k>', action = '' },
+							},
+						},
+					},
+				})
+			vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>NvimTreeToggle<cr>', {noremap = true})
 		end
 	}
 
