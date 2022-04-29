@@ -64,14 +64,6 @@ vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>', {noremap = true})
 -- Encoding
 vim.api.nvim_set_keymap('n', '<leader>j', ':e ++enc=cp932', {noremap = true})
 
--- Sidebar
--- vim.g.netrw_banner = false
--- vim.g.netrw_winsize = 25
--- vim.g.netrw_liststyle = 3
--- vim.g.netrw_browse_split = 4
--- vim.g.netrw_altv = 1
--- vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>Lexplore<CR>', {noremap = true})
-
 -- Packages
 vim.cmd([[
 	augroup packer_user_config
@@ -105,49 +97,13 @@ packer.startup(function(use)
 	use 'nvim-treesitter/nvim-treesitter'
 	use 'sheerun/vim-polyglot'
 
-	-- Telescope
-	use {'nvim-telescope/telescope.nvim',
-		requires = {
-			{'nvim-lua/plenary.nvim'},
-			{'nvim-telescope/telescope-fzy-native.nvim'},
-		},
-		config = function()
-			require('telescope').setup {
-				defaults = {
-					mappings = {
-						i = {
-							['<C-j>'] = 'move_selection_next',
-							['<C-k>'] = 'move_selection_previous',
-						}
-					}
-				},
-				extensions = {
-					fzy_native = {
-						override_generic_sorter = false,
-						override_file_sorter = true,
-					}
-				}
-			}
-			require('telescope').load_extension('fzy_native')
-			vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files find_command=fd previewer=false<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files find_command=fd previewer=false hidden=true no_ignore=true<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>Telescope live_grep<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>G', '<cmd>Telescope grep_string<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files previewer=false<cr>', {noremap = true})
-		end
-	}
-
 	-- Toggleterm
 	use {'akinsho/toggleterm.nvim',
 		config = function()
-			require('toggleterm').setup({
+			require('toggleterm').setup {
 					open_mapping = [[<c-\>]],
 					direction = 'float',
-					float_opts = {
-						border = 'curved'
-					}
-				})
+				}
 		end
 	}
 
@@ -190,6 +146,53 @@ packer.startup(function(use)
 					},
 				})
 			vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>NvimTreeToggle<cr>', {noremap = true})
+		end
+	}
+
+	-- Telescope
+	use {'nvim-telescope/telescope.nvim',
+		requires = {
+			{'nvim-lua/plenary.nvim'},
+			{'nvim-telescope/telescope-fzy-native.nvim'},
+		},
+		tag = 'nvim-0.6',
+		config = function()
+			require('telescope').setup {
+				defaults = {
+					mappings = {
+						i = {
+							['<C-j>'] = 'move_selection_next',
+							['<C-k>'] = 'move_selection_previous',
+						},
+					},
+				},
+				pickers = {
+					find_files = {
+						previewer = false,
+						find_command = {'fd'},
+					},
+					git_files = {
+						previewer = false,
+					},
+					man_pages = {
+						sections = {'ALL'},
+					},
+				},
+				extensions = {
+					fzy_native = {
+						override_generic_sorter = false,
+						override_file_sorter = true,
+					},
+				},
+			}
+			require('telescope').load_extension('fzy_native')
+			vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files hidden=true no_ignore=true<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>Telescope live_grep<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>G', '<cmd>Telescope grep_string<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files<cr>', {noremap = true})
+			vim.api.nvim_set_keymap('n', '<leader>m', '<cmd>Telescope man_pages<cr>', {noremap = true})
 		end
 	}
 
