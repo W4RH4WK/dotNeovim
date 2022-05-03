@@ -28,41 +28,41 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Notes
-vim.api.nvim_set_keymap('n', '<F1>', '<cmd>:help notes<cr>', {noremap = true})
-vim.api.nvim_set_keymap('i', '<F1>', '<Nop>', {noremap = true})
+vim.keymap.set('n', '<F1>', '<cmd>:help notes<cr>')
+vim.keymap.set('i', '<F1>', '<Nop>')
 
 -- Disable Ex mode
-vim.api.nvim_set_keymap('n', 'Q', '<Nop>', {noremap = true})
+vim.keymap.set('n', 'Q', '<Nop>')
 
 -- Disable forward / backward (tmux)
-vim.api.nvim_set_keymap('n', '<c-b>', '<Nop>', {noremap = true})
-vim.api.nvim_set_keymap('n', '<c-f>', '<Nop>', {noremap = true})
+vim.keymap.set('n', '<c-b>', '<Nop>')
+vim.keymap.set('n', '<c-f>', '<Nop>')
 
 -- Window movement
-vim.api.nvim_set_keymap('n', '<c-h>', '<c-w>h', {noremap = true})
-vim.api.nvim_set_keymap('n', '<c-j>', '<c-w>j', {noremap = true})
-vim.api.nvim_set_keymap('n', '<c-k>', '<c-w>k', {noremap = true})
-vim.api.nvim_set_keymap('n', '<c-l>', '<c-w>l', {noremap = true})
+vim.keymap.set('n', '<c-h>', '<c-w>h')
+vim.keymap.set('n', '<c-j>', '<c-w>j')
+vim.keymap.set('n', '<c-k>', '<c-w>k')
+vim.keymap.set('n', '<c-l>', '<c-w>l')
 
 -- Macro replay
-vim.api.nvim_set_keymap('v', '@', '<cmd>normal @', {noremap = true, silent = true})
+vim.keymap.set('v', '@', '<cmd>normal @', {silent = true})
 
 -- Toggle auto wordwrap
-vim.api.nvim_set_keymap('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>', {noremap = true})
+vim.keymap.set('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>')
 
 -- Smarttab
-vim.api.nvim_set_keymap('i', '<S-TAB>', '<TAB>', {noremap = true})
-vim.api.nvim_set_keymap('i', '<TAB>', '<C-R>=SmartTab()<CR>', {noremap = true, silent = true})
+vim.keymap.set('i', '<S-TAB>', '<TAB>')
+vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 
 -- Trim trailing whitespace
-vim.api.nvim_set_keymap('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>', {noremap = true})
+vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
 
 -- Terminal
-vim.api.nvim_set_keymap('n', '<leader>x', '<cmd>:terminal<CR>', {noremap = true})
-vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>', {noremap = true})
+vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
 
 -- Encoding
-vim.api.nvim_set_keymap('n', '<leader>j', ':e ++enc=cp932', {noremap = true})
+vim.keymap.set('n', '<leader>j', ':e ++enc=cp932')
 
 -- Packages
 vim.cmd([[
@@ -88,7 +88,6 @@ packer.startup(function(use)
 	use 'mg979/vim-visual-multi'
 	use 'chamindra/marvim'
 	use {'numToStr/Comment.nvim',
-		tag = 'v0.6',
 		config = 'require("Comment").setup()'
 	}
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
@@ -101,9 +100,9 @@ packer.startup(function(use)
 	use {'akinsho/toggleterm.nvim',
 		config = function()
 			require('toggleterm').setup {
-					open_mapping = [[<c-\>]],
-					direction = 'float',
-				}
+				open_mapping = [[<c-\>]],
+				direction = 'float',
+			}
 		end
 	}
 
@@ -128,24 +127,19 @@ packer.startup(function(use)
 					symlink_open = "▾",
 				},
 			}
-			local tree_cb = require('nvim-tree.config').nvim_tree_callback
-			require('nvim-tree').setup({
-					renderer = {
-						indent_markers = {
-							enable = true,
+			require('nvim-tree').setup {
+				renderer = { indent_markers = { enable = true } },
+				view = {
+					mappings = {
+						custom_only = false,
+						list = {
+							{ key = 's', action = '' },
+							{ key = '<C-k>', action = '' },
 						},
 					},
-					view = {
-						mappings = {
-							custom_only = false,
-							list = {
-								{ key = 's', action = '' },
-								{ key = '<C-k>', action = '' },
-							},
-						},
-					},
-				})
-			vim.api.nvim_set_keymap('n', '<leader>n', '<cmd>NvimTreeToggle<cr>', {noremap = true})
+				},
+			}
+			vim.keymap.set('n', '<leader>n', require('nvim-tree').toggle)
 		end
 	}
 
@@ -154,8 +148,8 @@ packer.startup(function(use)
 		requires = {
 			{'nvim-lua/plenary.nvim'},
 			{'nvim-telescope/telescope-fzy-native.nvim'},
+			{'BurntSushi/ripgrep'},
 		},
-		tag = 'nvim-0.6',
 		config = function()
 			require('telescope').setup {
 				defaults = {
@@ -171,12 +165,8 @@ packer.startup(function(use)
 						previewer = false,
 						find_command = {'fd'},
 					},
-					git_files = {
-						previewer = false,
-					},
-					man_pages = {
-						sections = {'ALL'},
-					},
+					git_files = { previewer = false },
+					man_pages = { sections = {'ALL'} },
 				},
 				extensions = {
 					fzy_native = {
@@ -186,13 +176,14 @@ packer.startup(function(use)
 				},
 			}
 			require('telescope').load_extension('fzy_native')
-			vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>F', '<cmd>Telescope find_files hidden=true no_ignore=true<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>Telescope live_grep<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>G', '<cmd>Telescope grep_string<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>Telescope git_files<cr>', {noremap = true})
-			vim.api.nvim_set_keymap('n', '<leader>m', '<cmd>Telescope man_pages<cr>', {noremap = true})
+			builtins = require('telescope.builtin')
+			vim.keymap.set('n', '<leader>b', builtins.buffers)
+			vim.keymap.set('n', '<leader>f', builtins.find_files)
+			vim.keymap.set('n', '<leader>F', function() builtins.find_files({hidden = true, no_ignore = true}) end)
+			vim.keymap.set('n', '<leader>g', builtins.live_grep)
+			vim.keymap.set('n', '<leader>G', builtins.grep_string)
+			vim.keymap.set('n', '<leader>t', builtins.git_files)
+			vim.keymap.set('n', '<leader>m', builtins.man_pages)
 		end
 	}
 
@@ -201,12 +192,12 @@ packer.startup(function(use)
 	use {'jose-elias-alvarez/null-ls.nvim',
 		config = function()
 			local null_ls = require('null-ls')
-			null_ls.setup({
-					sources = {
-						null_ls.builtins.formatting.clang_format
-					}
-				})
-			vim.api.nvim_set_keymap('n', '<leader>a', '<cmd>lua vim.lsp.buf.formatting()<cr>', {noremap = true})
+			null_ls.setup {
+				sources = {
+					null_ls.builtins.formatting.clang_format,
+				},
+			}
+			vim.keymap.set('n', '<leader>a', vim.lsp.buf.formatting)
 		end
 	}
 end)
