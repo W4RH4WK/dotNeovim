@@ -201,7 +201,7 @@ packer.startup(function(use)
 					null_ls.builtins.formatting.clang_format,
 				},
 			}
-			vim.keymap.set('n', '<leader>a', vim.lsp.buf.formatting)
+			vim.keymap.set({'n', 'v'}, '<leader>a', vim.lsp.buf.formatting)
 		end
 	}
 end)
