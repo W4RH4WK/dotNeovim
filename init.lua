@@ -105,7 +105,7 @@ packer.startup(function(use)
 		config = function()
 			require('toggleterm').setup {
 				open_mapping = [[<c-\>]],
-				direction = 'float',
+				direction = 'tab',
 			}
 		end
 	}
