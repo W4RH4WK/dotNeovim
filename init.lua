@@ -34,6 +34,10 @@ vim.keymap.set('i', '<F1>', '<Nop>')
 -- Disable Ex mode
 vim.keymap.set('n', 'Q', '<Nop>')
 
+-- Remap delete word
+vim.keymap.set('i', '<c-w>', '<Nop>')
+vim.keymap.set('i', '', '<c-w>')
+
 -- Disable forward / backward (tmux)
 vim.keymap.set('n', '<c-b>', '<Nop>')
 vim.keymap.set('n', '<c-f>', '<Nop>')
