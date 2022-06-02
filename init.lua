@@ -7,6 +7,7 @@ vim.opt.linebreak = true
 vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
+vim.opt.laststatus = 3
 
 -- Handling
 vim.opt.autowrite = true
@@ -26,6 +27,9 @@ vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+
+-- Leader
+vim.g.mapleader = ' '
 
 -- Notes
 vim.keymap.set('n', '<F1>', '<cmd>:help notes<cr>')
@@ -62,11 +66,16 @@ vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
 
 -- Terminal
-vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+--vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
 
 -- Encoding
-vim.keymap.set('n', '<leader>j', ':e ++enc=cp932')
+vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
+
+-- Build + quick windows
+vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
+vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
+vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
 
 -- Packages
 vim.cmd([[
@@ -81,8 +90,22 @@ packer.startup(function(use)
 	use 'wbthomason/packer.nvim'
 
 	-- Theme
-	use {'jacoborus/tender.vim', config = 'vim.cmd[[colorscheme tender]]'}
+	use {'jacoborus/tender.vim',
+		config = function()
+			vim.cmd[[colorscheme tender]]
+			vim.cmd[[hi VertSplit ctermfg=237 ctermbg=235]]
+		end
+	}
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
+	--use {'morhetz/gruvbox',
+	--	config = function()
+	--		vim.g.gruvbox_contrast_dark = 'hard'
+	--		vim.cmd[[colorscheme gruvbox]]
+	--	end
+	--}
+	--use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "gruvbox"}'}
+	--use {'ful1e5/onedark.nvim', config = 'vim.cmd[[colorscheme onedark]]'}
+	--use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "onedark"}'}
 
 	-- Handling
 	use 'editorconfig/editorconfig-vim'
@@ -104,7 +127,7 @@ packer.startup(function(use)
 	use {'akinsho/toggleterm.nvim',
 		config = function()
 			require('toggleterm').setup {
-				open_mapping = [[<c-\>]],
+				open_mapping = [[<C-space>]],
 				direction = 'tab',
 			}
 		end
@@ -132,13 +155,13 @@ packer.startup(function(use)
 				},
 			}
 			require('nvim-tree').setup {
-				renderer = { indent_markers = { enable = true } },
+				renderer = {indent_markers = {enable = true}},
 				view = {
 					mappings = {
 						custom_only = false,
 						list = {
-							{ key = 's', action = '' },
-							{ key = '<C-k>', action = '' },
+							{key = 's', action = ''},
+							{key = '<C-k>', action = ''},
 						},
 					},
 				},
@@ -161,6 +184,8 @@ packer.startup(function(use)
 						i = {
 							['<C-j>'] = 'move_selection_next',
 							['<C-k>'] = 'move_selection_previous',
+							['<C-w>'] = { '<nop>', type = 'command' },
+							[''] = { '<c-s-w>', type = 'command' },
 						},
 					},
 				},
@@ -169,8 +194,8 @@ packer.startup(function(use)
 						previewer = false,
 						find_command = {'fd'},
 					},
-					git_files = { previewer = false },
-					man_pages = { sections = {'ALL'} },
+					git_files = {previewer = false},
+					man_pages = {sections = {'ALL'}},
 				},
 				extensions = {
 					fzy_native = {
@@ -181,25 +206,41 @@ packer.startup(function(use)
 			}
 			require('telescope').load_extension('fzy_native')
 			builtins = require('telescope.builtin')
-			vim.keymap.set('n', '<leader>b', builtins.buffers)
+			vim.keymap.set('n', '<leader>r', builtins.resume)
+			vim.keymap.set('n', '<leader>d', builtins.buffers)
 			vim.keymap.set('n', '<leader>f', builtins.find_files)
 			vim.keymap.set('n', '<leader>F', function() builtins.find_files({hidden = true, no_ignore = true}) end)
-			vim.keymap.set('n', '<leader>g', builtins.live_grep)
-			vim.keymap.set('n', '<leader>G', builtins.grep_string)
-			vim.keymap.set('n', '<leader>t', builtins.git_files)
+			vim.keymap.set('n', '<leader>s', builtins.live_grep)
+			vim.keymap.set('n', '<leader>S', builtins.grep_string)
+			vim.keymap.set('n', '<leader>g', builtins.git_files)
 			vim.keymap.set('n', '<leader>m', builtins.man_pages)
 		end
 	}
 
 	-- LSP
-	use 'neovim/nvim-lspconfig'
+	use {'neovim/nvim-lspconfig',
+		config = function()
+			local lspconfig = require('lspconfig')
+			local servers = {}
+			local on_attach = function(client, bufnr)
+				vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+				vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {buffer = bufnr})
+				vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {buffer = bufnr})
+				vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {buffer = bufnr})
+				vim.keymap.set('n', 'gr', vim.lsp.buf.references, {buffer = bufnr})
+				vim.keymap.set('n', 'K', vim.lsp.buf.hover, {buffer = bufnr})
+				vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, {buffer = bufnr})
+			end
+			for _, lsp in pairs(servers) do
+				lspconfig[lsp].setup {on_attach = on_attach}
+			end
+		end
+	}
 	use {'jose-elias-alvarez/null-ls.nvim',
 		config = function()
 			local null_ls = require('null-ls')
 			null_ls.setup {
-				sources = {
-					null_ls.builtins.formatting.clang_format,
-				},
+				sources = {null_ls.builtins.formatting.clang_format},
 			}
 			vim.keymap.set({'n', 'v'}, '<leader>a', vim.lsp.buf.formatting)
 		end
