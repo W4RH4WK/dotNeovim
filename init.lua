@@ -8,6 +8,7 @@ vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
 vim.opt.laststatus = 3
+vim.opt.wrap = false
 
 -- Handling
 vim.opt.autowrite = true
@@ -37,10 +38,6 @@ vim.keymap.set('i', '<F1>', '<Nop>')
 
 -- Disable Ex mode
 vim.keymap.set('n', 'Q', '<Nop>')
-
--- Remap delete word
-vim.keymap.set('i', '<c-w>', '<Nop>')
-vim.keymap.set('i', '', '<c-w>')
 
 -- Disable forward / backward (tmux)
 vim.keymap.set('n', '<c-b>', '<Nop>')
@@ -184,8 +181,6 @@ packer.startup(function(use)
 						i = {
 							['<C-j>'] = 'move_selection_next',
 							['<C-k>'] = 'move_selection_previous',
-							['<C-w>'] = { '<nop>', type = 'command' },
-							[''] = { '<c-s-w>', type = 'command' },
 						},
 					},
 				},
