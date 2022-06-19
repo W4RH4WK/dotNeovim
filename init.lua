@@ -133,26 +133,30 @@ packer.startup(function(use)
 	-- Sidebar
 	use {'kyazdani42/nvim-tree.lua',
 		config = function()
-			vim.g.nvim_tree_show_icons = {
-				folders = 1,
-				files = 0,
-				git = 0,
-				folder_arrows = 0,
-			}
-			vim.g.nvim_tree_icons = {
-				folder = {
-					arrow_open = "▾",
-					arrow_closed = "▸",
-					default = "▸",
-					open =  "▾",
-					empty = "▸",
-					empty_open = "▾",
-					symlink = "▸",
-					symlink_open = "▾",
-				},
-			}
 			require('nvim-tree').setup {
-				renderer = {indent_markers = {enable = true}},
+				renderer = {
+					indent_markers = {enable = true},
+					icons = {
+						show = {
+							folder = true,
+							file = false,
+							git = false,
+							folder_arrow = false,
+						},
+						glyphs = {
+							folder = {
+								arrow_open = "▾",
+								arrow_closed = "▸",
+								default = "▸",
+								open =  "▾",
+								empty = "▸",
+								empty_open = "▾",
+								symlink = "▸",
+								symlink_open = "▾",
+							}
+						},
+					},
+				},
 				view = {
 					mappings = {
 						custom_only = false,
