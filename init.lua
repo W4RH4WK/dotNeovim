@@ -59,20 +59,17 @@ vim.keymap.set('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "for
 vim.keymap.set('i', '<S-TAB>', '<TAB>')
 vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 
--- Trim trailing whitespace
-vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
-
--- Terminal
---vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+-- Terminal Esc
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
 
--- Encoding
-vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
-
--- Build + quick windows
+-- Leader Bindings
+vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
+vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
+vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
 vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
+vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
 
 -- Packages
 vim.cmd([[
@@ -94,15 +91,6 @@ packer.startup(function(use)
 		end
 	}
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
-	--use {'morhetz/gruvbox',
-	--	config = function()
-	--		vim.g.gruvbox_contrast_dark = 'hard'
-	--		vim.cmd[[colorscheme gruvbox]]
-	--	end
-	--}
-	--use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "gruvbox"}'}
-	--use {'ful1e5/onedark.nvim', config = 'vim.cmd[[colorscheme onedark]]'}
-	--use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "onedark"}'}
 
 	-- Handling
 	use 'editorconfig/editorconfig-vim'
@@ -111,9 +99,7 @@ packer.startup(function(use)
 	use 'tpope/vim-unimpaired'
 	use 'mg979/vim-visual-multi'
 	use 'chamindra/marvim'
-	use {'numToStr/Comment.nvim',
-		config = 'require("Comment").setup()'
-	}
+	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()' }
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
 
 	-- Syntax
@@ -167,7 +153,7 @@ packer.startup(function(use)
 					},
 				},
 			}
-			vim.keymap.set('n', '<leader>n', require('nvim-tree').toggle)
+			vim.keymap.set('n', '<leader>e', require('nvim-tree').toggle)
 		end
 	}
 
