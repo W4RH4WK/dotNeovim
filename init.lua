@@ -21,6 +21,7 @@ vim.opt.smartcase = true
 vim.opt.formatoptions = 'cjqrt'
 vim.opt.mouse = 'a'
 vim.opt.joinspaces = false
+vim.opt.switchbuf = 'useopen,vsplit'
 
 -- Encoding
 vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
@@ -28,9 +29,6 @@ vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-
--- Leader
-vim.g.mapleader = ' '
 
 -- Notes
 vim.keymap.set('n', '<F1>', '<cmd>:help notes<cr>')
@@ -63,12 +61,14 @@ vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
 
 -- Leader Bindings
+vim.g.mapleader = ' '
 vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
-vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+vim.keymap.set('n', '<leader>h', '<cmd>noh<cr>')
 vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
+vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
 vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
 
 -- Packages
