@@ -30,10 +30,6 @@ vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
--- Notes
-vim.keymap.set('n', '<F1>', '<cmd>:help notes<cr>')
-vim.keymap.set('i', '<F1>', '<Nop>')
-
 -- Disable Ex mode
 vim.keymap.set('n', 'Q', '<Nop>')
 
@@ -175,6 +171,7 @@ packer.startup(function(use)
 					},
 				},
 				pickers = {
+					buffers = {sort_lastused = true},
 					find_files = {
 						previewer = false,
 						find_command = {'fd'},
@@ -199,6 +196,8 @@ packer.startup(function(use)
 			vim.keymap.set('n', '<leader>S', builtins.grep_string)
 			vim.keymap.set('n', '<leader>g', builtins.git_files)
 			vim.keymap.set('n', '<leader>m', builtins.man_pages)
+			vim.keymap.set('n', '<leader>n', function() builtins.find_files({cwd = "~/git/notes"}) end)
+			vim.keymap.set('n', '<leader>N', function() builtins.live_grep({cwd = "~/git/notes"}) end)
 		end
 	}
 
