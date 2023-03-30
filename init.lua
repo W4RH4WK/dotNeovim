@@ -7,7 +7,6 @@ vim.opt.linebreak = true
 vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
-vim.opt.laststatus = 3
 vim.opt.wrap = false
 
 -- Handling
@@ -22,6 +21,12 @@ vim.opt.formatoptions = 'cjqrt'
 vim.opt.mouse = 'a'
 vim.opt.joinspaces = false
 vim.opt.switchbuf = 'useopen,vsplit'
+vim.opt.wildignorecase = true
+
+vim.cmd([[autocmd BufEnter * :syntax sync fromstart]])
+
+-- Building
+vim.opt.makeprg = 'ninja -C build'
 
 -- Encoding
 vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
@@ -55,13 +60,18 @@ vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 
 -- Terminal Esc
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
+vim.cmd([[
+	autocmd TermOpen * startinsert
+	autocmd TermClose * call feedkeys("i")
+]])
 
 -- Leader Bindings
 vim.g.mapleader = ' '
 vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
 vim.keymap.set('n', '<leader>h', '<cmd>noh<cr>')
-vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
+--vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
+vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>Neomake!<cr>')
 vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
 vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
@@ -79,38 +89,70 @@ local packer = require('packer')
 packer.startup(function(use)
 	use 'wbthomason/packer.nvim'
 
+	--use 'lewis6991/impatient.nvim'
+
 	-- Theme
 	use {'jacoborus/tender.vim',
 		config = function()
 			vim.cmd[[colorscheme tender]]
-			vim.cmd[[hi VertSplit ctermfg=237 ctermbg=235]]
+			vim.cmd[[hi Normal guifg=#eeeeee ctermfg=255 guibg=#1e1e1e ctermbg=234 gui=NONE cterm=NONE]]
+			vim.cmd[[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]]
 		end
 	}
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
+	-- use {'LunarVim/onedarker.nvim',
+	-- 	branch = 'freeze',
+	-- 	config = 'require("onedarker").setup()',
+	-- }
+	-- use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "one"}'}
+	-- use { 'ellisonleao/gruvbox.nvim',
+	-- 	config = function()
+	-- 		require('gruvbox').setup {
+	-- 			contrast = 'hard',
+	-- 		}
+	-- 		vim.cmd([[colorscheme gruvbox]])
+	-- 	end
+	-- }
+	-- use { 'folke/tokyonight.nvim',
+	-- 	config = function()
+	-- 		vim.g.tokyonight_style = 'night'
+	-- 		vim.cmd[[colorscheme tokyonight]]
+	-- 	end
+	-- }
+	-- use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
 
 	-- Handling
 	use 'editorconfig/editorconfig-vim'
 	use 'tpope/vim-repeat'
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
-	use 'mg979/vim-visual-multi'
 	use 'chamindra/marvim'
+	use 'neomake/neomake'
+	use 'maxbrunsfeld/vim-yankstack'
+	use 'mg979/vim-visual-multi'
 	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()' }
 	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
+	use {'folke/which-key.nvim', config = function()
+			require('which-key').setup {
+				window = { padding = {0, 0, 0, 0} },
+				layout = { align = 'center' },
+			}
+		end
+	}
 
 	-- Syntax
 	use 'nvim-treesitter/nvim-treesitter'
 	use 'sheerun/vim-polyglot'
 
 	-- Toggleterm
-	use {'akinsho/toggleterm.nvim',
-		config = function()
-			require('toggleterm').setup {
-				open_mapping = [[<C-space>]],
-				direction = 'tab',
-			}
-		end
-	}
+	-- use {'akinsho/toggleterm.nvim',
+	-- 	config = function()
+	-- 		require('toggleterm').setup {
+	-- 			open_mapping = [[<C-space>]],
+	-- 			direction = 'tab',
+	-- 		}
+	-- 	end
+	-- }
 
 	-- Sidebar
 	use {'kyazdani42/nvim-tree.lua',
@@ -163,6 +205,7 @@ packer.startup(function(use)
 		config = function()
 			require('telescope').setup {
 				defaults = {
+					layout_strategy = 'vertical',
 					mappings = {
 						i = {
 							['<C-j>'] = 'move_selection_next',
