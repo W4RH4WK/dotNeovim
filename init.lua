@@ -42,6 +42,9 @@ vim.keymap.set('n', 'Q', '<Nop>')
 vim.keymap.set('n', '<c-b>', '<Nop>')
 vim.keymap.set('n', '<c-f>', '<Nop>')
 
+-- Don't yank on paste
+-- vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true})
+
 -- Window movement
 vim.keymap.set('n', '<c-h>', '<c-w>h')
 vim.keymap.set('n', '<c-j>', '<c-w>j')
@@ -89,8 +92,6 @@ local packer = require('packer')
 packer.startup(function(use)
 	use 'wbthomason/packer.nvim'
 
-	--use 'lewis6991/impatient.nvim'
-
 	-- Theme
 	use {'jacoborus/tender.vim',
 		config = function()
@@ -99,27 +100,21 @@ packer.startup(function(use)
 			vim.cmd[[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]]
 		end
 	}
+	-- use {'rebelot/kanagawa.nvim', config = function()
+	-- 		require('kanagawa').setup({
+	-- 			commentStyle = { italic = false },
+	-- 		})
+	--
+	-- 		vim.cmd[[colorscheme kanagawa-wave]]
+	-- 	end
+	-- }
+	-- use {'sainnhe/sonokai', config = function()
+	-- 		vim.g.sonokai_style = 'default'
+	-- 		vim.g.sonokai_disable_italic_comment = true
+	-- 		vim.cmd[[colorscheme sonokai]]
+	-- 	end
+	-- }
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
-	-- use {'LunarVim/onedarker.nvim',
-	-- 	branch = 'freeze',
-	-- 	config = 'require("onedarker").setup()',
-	-- }
-	-- use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "one"}'}
-	-- use { 'ellisonleao/gruvbox.nvim',
-	-- 	config = function()
-	-- 		require('gruvbox').setup {
-	-- 			contrast = 'hard',
-	-- 		}
-	-- 		vim.cmd([[colorscheme gruvbox]])
-	-- 	end
-	-- }
-	-- use { 'folke/tokyonight.nvim',
-	-- 	config = function()
-	-- 		vim.g.tokyonight_style = 'night'
-	-- 		vim.cmd[[colorscheme tokyonight]]
-	-- 	end
-	-- }
-	-- use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
 
 	-- Handling
 	use 'editorconfig/editorconfig-vim'
@@ -143,57 +138,6 @@ packer.startup(function(use)
 	-- Syntax
 	use 'nvim-treesitter/nvim-treesitter'
 	use 'sheerun/vim-polyglot'
-
-	-- Toggleterm
-	-- use {'akinsho/toggleterm.nvim',
-	-- 	config = function()
-	-- 		require('toggleterm').setup {
-	-- 			open_mapping = [[<C-space>]],
-	-- 			direction = 'tab',
-	-- 		}
-	-- 	end
-	-- }
-
-	-- Sidebar
-	use {'kyazdani42/nvim-tree.lua',
-		config = function()
-			require('nvim-tree').setup {
-				renderer = {
-					indent_markers = {enable = true},
-					icons = {
-						show = {
-							folder = true,
-							file = false,
-							git = false,
-							folder_arrow = false,
-						},
-						glyphs = {
-							folder = {
-								arrow_open = "▾",
-								arrow_closed = "▸",
-								default = "▸",
-								open =  "▾",
-								empty = "▸",
-								empty_open = "▾",
-								symlink = "▸",
-								symlink_open = "▾",
-							}
-						},
-					},
-				},
-				view = {
-					mappings = {
-						custom_only = false,
-						list = {
-							{key = 's', action = ''},
-							{key = '<C-k>', action = ''},
-						},
-					},
-				},
-			}
-			vim.keymap.set('n', '<leader>e', require('nvim-tree').toggle)
-		end
-	}
 
 	-- Telescope
 	use {'nvim-telescope/telescope.nvim',
