@@ -1,7 +1,7 @@
 -- Visual
 vim.opt.cursorline = true
-vim.opt.number = true
-vim.opt.relativenumber = true
+--vim.opt.number = true
+--vim.opt.relativenumber = true
 vim.opt.guicursor = ''
 vim.opt.linebreak = true
 vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
@@ -14,7 +14,7 @@ vim.opt.autowrite = true
 vim.opt.swapfile = false
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-vim.opt.clipboard = 'unnamedplus'
+--vim.opt.clipboard = 'unnamedplus'
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.formatoptions = 'cjqrt'
@@ -38,13 +38,9 @@ vim.opt.shiftwidth = 4
 -- Disable Ex mode
 vim.keymap.set('n', 'Q', '<Nop>')
 
--- Disable forward / backward (tmux)
-vim.keymap.set('n', '<c-b>', '<Nop>')
-vim.keymap.set('n', '<c-f>', '<Nop>')
-
 -- Don't yank on paste
--- vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true})
-
+vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true})
+        
 -- Window movement
 vim.keymap.set('n', '<c-h>', '<c-w>h')
 vim.keymap.set('n', '<c-j>', '<c-w>j')
@@ -78,6 +74,8 @@ vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>Neomake!<cr>')
 vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
 vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
 vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+vim.keymap.set('n', '<leader>p', '"+p')
+vim.keymap.set('n', '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
 
 -- Packages
@@ -100,20 +98,6 @@ packer.startup(function(use)
 			vim.cmd[[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]]
 		end
 	}
-	-- use {'rebelot/kanagawa.nvim', config = function()
-	-- 		require('kanagawa').setup({
-	-- 			commentStyle = { italic = false },
-	-- 		})
-	--
-	-- 		vim.cmd[[colorscheme kanagawa-wave]]
-	-- 	end
-	-- }
-	-- use {'sainnhe/sonokai', config = function()
-	-- 		vim.g.sonokai_style = 'default'
-	-- 		vim.g.sonokai_disable_italic_comment = true
-	-- 		vim.cmd[[colorscheme sonokai]]
-	-- 	end
-	-- }
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
 
 	-- Handling
@@ -205,15 +189,6 @@ packer.startup(function(use)
 			for _, lsp in pairs(servers) do
 				lspconfig[lsp].setup {on_attach = on_attach}
 			end
-		end
-	}
-	use {'jose-elias-alvarez/null-ls.nvim',
-		config = function()
-			local null_ls = require('null-ls')
-			null_ls.setup {
-				sources = {null_ls.builtins.formatting.clang_format},
-			}
-			vim.keymap.set({'n', 'v'}, '<leader>a', vim.lsp.buf.formatting)
 		end
 	}
 end)
