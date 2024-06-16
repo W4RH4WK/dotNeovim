@@ -1,159 +1,192 @@
 -- Visual
 vim.opt.cursorline = true
---vim.opt.number = true
---vim.opt.relativenumber = true
-vim.opt.guicursor = ''
+vim.opt.guicursor = ""
 vim.opt.linebreak = true
-vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
+vim.opt.listchars:append({ tab = "» ", eol = "¬", trail = "·" })
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
-vim.opt.wrap = false
 vim.opt.termguicolors = true
+vim.opt.wrap = false
 
 -- Handling
 vim.opt.autowrite = true
-vim.opt.swapfile = false
+vim.opt.formatoptions = vim.opt.formatoptions + "r"
+vim.opt.ignorecase = true
+vim.opt.joinspaces = false
+vim.opt.mouse = "a"
+vim.opt.smartcase = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.formatoptions = vim.opt.formatoptions + 'r'
-vim.opt.mouse = 'a'
-vim.opt.joinspaces = false
-vim.opt.switchbuf = 'useopen,vsplit'
+vim.opt.swapfile = false
+vim.opt.switchbuf = "useopen,vsplit"
 vim.opt.wildignorecase = true
 
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-
-vim.cmd([[autocmd BufEnter * :syntax sync fromstart]])
+vim.opt.smartindent = true
 
 -- Leader
-vim.g.mapleader = ' '
+vim.g.mapleader = " "
 
 -- Disable Ex mode
-vim.keymap.set('n', 'Q', '<Nop>')
+vim.keymap.set("n", "Q", "<Nop>")
 
--- Basic bindings
-vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
-vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
-vim.keymap.set('n', '<leader>h', '<cmd>noh<cr>')
-vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
-vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
-vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+-- Basics
+vim.keymap.set("n", "<leader>q", "<cmd>%s/\\s\\+$//<cr>:noh<cr>", { desc = "Remove trailing whitespace" })
+vim.keymap.set("n", "<leader>w", "<cmd>w<cr>")
+vim.keymap.set("n", "<leader>h", "<cmd>noh<cr>")
+vim.keymap.set("v", "@", "<cmd>normal @", { silent = true })
+vim.keymap.set("v", "p", "P", { noremap = true, silent = true }) -- Don't yank on paste
+vim.keymap.set(
+	"n",
+	"yof",
+	function()
+		if vim.opt_local.formatoptions:get().a then
+			vim.opt_local.formatoptions:remove("a")
+			print("Auto wordwrap disabled")
+		else
+			vim.opt_local.formatoptions:append("a")
+			print("Auto wordwrap enabled")
+		end
+	end,
+	-- ':<c-u>setlocal <c-r>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<cr><cr>',
+	{ desc = "Toggle auto wordwrap" }
+)
 
 -- Window movement
-vim.keymap.set('n', '<c-h>', '<c-w>h')
-vim.keymap.set('n', '<c-h>', '<c-w>h')
-vim.keymap.set('n', '<c-j>', '<c-w>j')
-vim.keymap.set('n', '<c-k>', '<c-w>k')
-vim.keymap.set('n', '<c-l>', '<c-w>l')
+vim.keymap.set("n", "<c-h>", "<c-w>h")
+vim.keymap.set("n", "<c-h>", "<c-w>h")
+vim.keymap.set("n", "<c-j>", "<c-w>j")
+vim.keymap.set("n", "<c-k>", "<c-w>k")
+vim.keymap.set("n", "<c-l>", "<c-w>l")
 
--- Smarttab
-vim.keymap.set('i', '<S-TAB>', '<TAB>')
-vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
+-- Code movement
+vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv")
+vim.keymap.set("v", ">", ">gv")
+vim.keymap.set("v", "<", "<gv")
 
--- Toggle auto wordwrap
-vim.keymap.set('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>')
+-- Search movement
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
 
--- Macro replay
-vim.keymap.set('v', '@', '<cmd>normal @', {silent = true})
-
--- Clipboard
---vim.opt.clipboard = 'unnamedplus'
-vim.keymap.set({'n', 'v'}, '<leader>p', '"+p')
-vim.keymap.set({'n', 'v'}, '<leader>y', '"+y')
-vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true}) -- Don't yank on paste
+-- System clipboard
+vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
+vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "Yank to system clipboard" })
+vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
+vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { desc = "Paste from system clipboard" })
 
 -- Encoding
-vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
-vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
+vim.opt.fileencodings = "ucs-bom,utf-8,cp932,default"
+vim.keymap.set("n", "<leader>z", ":e ++enc=cp932", { desc = "Reopen as Shift-JIS" })
 
--- Building
-vim.opt.makeprg = 'ninja -C build'
-vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>Neomake!<cr>')
---vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
+-- LSP
+vim.keymap.set("n", "<leader>a", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", { desc = "Format document" })
+vim.keymap.set("n", "<leader>ci", "<cmd>LspInfo<cr>", { desc = "LSP Info" })
+vim.keymap.set("n", "<leader>cI", "<cmd>LspInstallInfo<cr>", { desc = "LSP Install Info" })
+vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "Code action" })
+vim.keymap.set("n", "<leader>cj", "<cmd>lua vim.diagnostic.goto_next({buffer=0})<cr>", { desc = "Next diagnostic" })
+vim.keymap.set("n", "<leader>ck", "<cmd>lua vim.diagnostic.goto_prev({buffer=0})<cr>", { desc = "Prev diagnostic" })
+vim.keymap.set("n", "<leader>cr", "<cmd>lua vim.lsp.buf.rename()<cr>", { desc = "Rename" })
+vim.keymap.set("n", "<leader>cs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", { desc = "Signature help" })
+vim.keymap.set("n", "<leader>cq", "<cmd>lua vim.diagnostic.setloclist()<cr>", { desc = "Set loc list" })
 
--- Terminal Esc
-vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
-vim.cmd([[
-	autocmd TermOpen * startinsert
-	autocmd TermClose * call feedkeys("i")
-]])
+-- lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
+end
+vim.opt.rtp:prepend(lazypath)
 
--- Packages
-vim.cmd([[
-	augroup packer_user_config
-		autocmd!
-		autocmd BufWritePost ~/.config/nvim/init.lua source <afile> | PackerCompile
-	augroup end
-]])
+vim.keymap.set("n", "<leader>L", "<cmd>Lazy<cr>")
 
-local packer = require('packer')
-packer.startup(function(use)
-	use 'wbthomason/packer.nvim'
+require("lazy").setup({
+	"chamindra/marvim",
+	"editorconfig/editorconfig-vim",
+	"maxbrunsfeld/vim-yankstack",
+	"mg979/vim-visual-multi",
+	"nvim-treesitter/nvim-treesitter",
+	"sheerun/vim-polyglot",
+	"tpope/vim-repeat",
+	"tpope/vim-surround",
+	"tpope/vim-unimpaired",
 
-	-- Theme
-	use {'jacoborus/tender.vim',
+	{
+		"farmergreg/vim-lastplace",
 		config = function()
-			vim.cmd[[colorscheme tender]]
-			vim.cmd[[hi Normal guifg=#eeeeee ctermfg=255 guibg=#1e1e1e ctermbg=234 gui=NONE cterm=NONE]]
-			vim.cmd[[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]]
-		end
-	}
-	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
-	-- use 'RRethy/base16-nvim'
+			vim.g.lastplace_ignore = "gitcommit"
+		end,
+	},
 
-	-- Handling
-	use 'editorconfig/editorconfig-vim'
-	use 'tpope/vim-repeat'
-	use 'tpope/vim-surround'
-	use 'tpope/vim-unimpaired'
-	use 'chamindra/marvim'
-	use 'neomake/neomake'
-	use 'maxbrunsfeld/vim-yankstack'
-	use 'mg979/vim-visual-multi'
-	use {'numToStr/Comment.nvim', config = 'require("Comment").setup()' }
-	use {'farmergreg/vim-lastplace', config = 'vim.g.lastplace_ignore = "gitcommit"'}
-	use {'folke/which-key.nvim', config = function()
-			require('which-key').setup {
-				window = { padding = {0, 0, 0, 0} },
-				layout = { align = 'center' },
-			}
-		end
-	}
+	{
+		"folke/which-key.nvim",
+		dependencies = { "afreakk/unimpaired-which-key.nvim" },
+		config = function()
+			local wk = require("which-key")
+			local uwk = require("unimpaired-which-key")
+			wk.setup({
+				window = { padding = { 0, 0, 0, 0 } },
+				layout = { align = "center" },
+			})
+			wk.register(uwk.normal_mode)
+			wk.register(uwk.normal_and_visual_mode, { mode = { "n", "v" } })
+		end,
+	},
 
-	-- Syntax
-	use 'nvim-treesitter/nvim-treesitter'
-	use 'sheerun/vim-polyglot'
+	-- Visual
+
+	{
+		"jacoborus/tender.vim",
+		config = function()
+			vim.cmd([[colorscheme tender]])
+			vim.cmd([[hi Normal guifg=#eeeeee ctermfg=255 guibg=#1e1e1e ctermbg=234 gui=NONE cterm=NONE]])
+			vim.cmd([[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]])
+		end,
+	},
+
+	{
+		"itchyny/lightline.vim",
+		config = function()
+			vim.g.lightline = { colorscheme = "wombat" }
+		end,
+	},
 
 	-- Telescope
-	use {'nvim-telescope/telescope.nvim',
-		requires = {
-			{'nvim-lua/plenary.nvim'},
-			{'nvim-telescope/telescope-fzy-native.nvim'},
-			{'BurntSushi/ripgrep'},
+
+	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = {
+			{ "nvim-lua/plenary.nvim" },
+			{ "nvim-telescope/telescope-fzy-native.nvim" },
+			{ "BurntSushi/ripgrep" },
 		},
 		config = function()
-			require('telescope').setup {
+			require("telescope").setup({
 				defaults = {
-					layout_strategy = 'vertical',
+					layout_strategy = "vertical",
 					mappings = {
 						i = {
-							['<C-j>'] = 'move_selection_next',
-							['<C-k>'] = 'move_selection_previous',
+							["<C-j>"] = "move_selection_next",
+							["<C-k>"] = "move_selection_previous",
 						},
 					},
 				},
 				pickers = {
-					buffers = {sort_lastused = true},
+					buffers = { sort_lastused = true },
 					find_files = {
 						previewer = false,
-						find_command = {'fd'},
+						find_command = { "fd" },
 					},
-					git_files = {previewer = false},
-					man_pages = {sections = {'ALL'}},
+					git_files = { previewer = false },
+					man_pages = { sections = { "ALL" } },
 				},
 				extensions = {
 					fzy_native = {
@@ -161,39 +194,56 @@ packer.startup(function(use)
 						override_file_sorter = true,
 					},
 				},
-			}
-			require('telescope').load_extension('fzy_native')
-			builtins = require('telescope.builtin')
-			vim.keymap.set('n', '<leader>r', builtins.resume)
-			vim.keymap.set('n', '<leader>d', builtins.buffers)
-			vim.keymap.set('n', '<leader>f', builtins.find_files)
-			vim.keymap.set('n', '<leader>F', function() builtins.find_files({hidden = true, no_ignore = true}) end)
-			vim.keymap.set('n', '<leader>s', builtins.live_grep)
-			vim.keymap.set('n', '<leader>S', builtins.grep_string)
-			vim.keymap.set('n', '<leader>g', builtins.git_files)
-			vim.keymap.set('n', '<leader>m', builtins.man_pages)
-			vim.keymap.set('n', '<leader>n', function() builtins.find_files({cwd = "~/git/notes"}) end)
-			vim.keymap.set('n', '<leader>N', function() builtins.live_grep({cwd = "~/git/notes"}) end)
-		end
-	}
+			})
+			require("telescope").load_extension("fzy_native")
+			builtins = require("telescope.builtin")
+			vim.keymap.set("n", "<leader>r", builtins.resume)
+			vim.keymap.set("n", "<leader>d", builtins.buffers)
+			vim.keymap.set("n", "<leader>f", builtins.find_files)
+			vim.keymap.set("n", "<leader>F", function()
+				builtins.find_files({ hidden = true, no_ignore = true })
+			end)
+			vim.keymap.set("n", "<leader>s", builtins.live_grep)
+			vim.keymap.set("n", "<leader>S", builtins.grep_string)
+			vim.keymap.set("n", "<leader>g", builtins.git_files)
+			vim.keymap.set("n", "<leader>m", builtins.man_pages)
+			vim.keymap.set("n", "<leader>n", function()
+				builtins.find_files({ cwd = "~/git/notes" })
+			end)
+			vim.keymap.set("n", "<leader>N", function()
+				builtins.live_grep({ cwd = "~/git/notes" })
+			end)
+		end,
+	},
 
 	-- LSP
-	use {'neovim/nvim-lspconfig',
+
+	{
+		"neovim/nvim-lspconfig",
 		config = function()
-			local lspconfig = require('lspconfig')
-			local servers = {}
+			local lspconfig = require("lspconfig")
 			local on_attach = function(client, bufnr)
-				vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-				vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {buffer = bufnr})
-				vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {buffer = bufnr})
-				vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {buffer = bufnr})
-				vim.keymap.set('n', 'gr', vim.lsp.buf.references, {buffer = bufnr})
-				vim.keymap.set('n', 'K', vim.lsp.buf.hover, {buffer = bufnr})
-				vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, {buffer = bufnr})
+				local opts = { noremap = true, silent = true }
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "gI", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 			end
-			for _, lsp in pairs(servers) do
-				lspconfig[lsp].setup {on_attach = on_attach}
-			end
-		end
-	}
-end)
+		end,
+	},
+
+	{
+		"nvimtools/none-ls.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			local null_ls = require("null-ls")
+			null_ls.setup({
+				sources = {
+					null_ls.builtins.formatting.stylua,
+				},
+			})
+		end,
+	},
+})
