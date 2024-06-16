@@ -8,54 +8,72 @@ vim.opt.listchars:append({tab = '» ', eol = '¬', trail = '·'})
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
 vim.opt.wrap = false
+vim.opt.termguicolors = true
 
 -- Handling
 vim.opt.autowrite = true
 vim.opt.swapfile = false
 vim.opt.splitbelow = true
 vim.opt.splitright = true
---vim.opt.clipboard = 'unnamedplus'
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.formatoptions = 'cjqrt'
+vim.opt.formatoptions = vim.opt.formatoptions + 'r'
 vim.opt.mouse = 'a'
 vim.opt.joinspaces = false
 vim.opt.switchbuf = 'useopen,vsplit'
 vim.opt.wildignorecase = true
 
-vim.cmd([[autocmd BufEnter * :syntax sync fromstart]])
-
--- Building
-vim.opt.makeprg = 'ninja -C build'
-
--- Encoding
-vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
-
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
+vim.cmd([[autocmd BufEnter * :syntax sync fromstart]])
+
+-- Leader
+vim.g.mapleader = ' '
+
 -- Disable Ex mode
 vim.keymap.set('n', 'Q', '<Nop>')
 
--- Don't yank on paste
-vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true})
-        
+-- Basic bindings
+vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
+vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
+vim.keymap.set('n', '<leader>h', '<cmd>noh<cr>')
+vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
+vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
+vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
+
 -- Window movement
+vim.keymap.set('n', '<c-h>', '<c-w>h')
 vim.keymap.set('n', '<c-h>', '<c-w>h')
 vim.keymap.set('n', '<c-j>', '<c-w>j')
 vim.keymap.set('n', '<c-k>', '<c-w>k')
 vim.keymap.set('n', '<c-l>', '<c-w>l')
 
--- Macro replay
-vim.keymap.set('v', '@', '<cmd>normal @', {silent = true})
+-- Smarttab
+vim.keymap.set('i', '<S-TAB>', '<TAB>')
+vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
 
 -- Toggle auto wordwrap
 vim.keymap.set('n', 'yof', ':<C-U>setlocal <C-R>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<CR><CR>')
 
--- Smarttab
-vim.keymap.set('i', '<S-TAB>', '<TAB>')
-vim.keymap.set('i', '<TAB>', '<C-R>=SmartTab()<CR>', {silent = true})
+-- Macro replay
+vim.keymap.set('v', '@', '<cmd>normal @', {silent = true})
+
+-- Clipboard
+--vim.opt.clipboard = 'unnamedplus'
+vim.keymap.set({'n', 'v'}, '<leader>p', '"+p')
+vim.keymap.set({'n', 'v'}, '<leader>y', '"+y')
+vim.keymap.set('v', 'p', 'P', {noremap = true, silent = true}) -- Don't yank on paste
+
+-- Encoding
+vim.opt.fileencodings = 'ucs-bom,utf-8,cp932,default'
+vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
+
+-- Building
+vim.opt.makeprg = 'ninja -C build'
+vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>Neomake!<cr>')
+--vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
 
 -- Terminal Esc
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>')
@@ -63,20 +81,6 @@ vim.cmd([[
 	autocmd TermOpen * startinsert
 	autocmd TermClose * call feedkeys("i")
 ]])
-
--- Leader Bindings
-vim.g.mapleader = ' '
-vim.keymap.set('n', '<leader>q', '<cmd>%s/\\s\\+$//<CR>:noh<CR>')
-vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
-vim.keymap.set('n', '<leader>h', '<cmd>noh<cr>')
---vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>')
-vim.keymap.set('n', '<leader>j', '<cmd>w<cr><cmd>Neomake!<cr>')
-vim.keymap.set('n', '<leader>k', '<cmd>cwindow<cr>')
-vim.keymap.set('n', '<leader>l', '<cmd>lwindow<cr>')
-vim.keymap.set('n', '<leader>x', '<cmd>:terminal<CR>')
-vim.keymap.set('n', '<leader>p', '"+p')
-vim.keymap.set('n', '<leader>y', '"+y')
-vim.keymap.set('n', '<leader>z', ':e ++enc=cp932')
 
 -- Packages
 vim.cmd([[
@@ -99,6 +103,7 @@ packer.startup(function(use)
 		end
 	}
 	use {'itchyny/lightline.vim', config = 'vim.g.lightline = {colorscheme = "wombat"}'}
+	-- use 'RRethy/base16-nvim'
 
 	-- Handling
 	use 'editorconfig/editorconfig-vim'
