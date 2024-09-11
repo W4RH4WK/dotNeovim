@@ -76,7 +76,7 @@ vim.opt.fileencodings = "ucs-bom,utf-8,cp932,default"
 vim.keymap.set("n", "<leader>z", ":e ++enc=cp932", { desc = "Reopen as Shift-JIS" })
 
 -- LSP
-vim.keymap.set("n", "<leader>a", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", { desc = "Format document" })
+vim.keymap.set({ "n", "v" }, "<leader>a", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", { desc = "Format code" })
 vim.keymap.set("n", "<leader>ci", "<cmd>LspInfo<cr>", { desc = "LSP Info" })
 vim.keymap.set("n", "<leader>cI", "<cmd>LspInstallInfo<cr>", { desc = "LSP Install Info" })
 vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "Code action" })
@@ -238,6 +238,7 @@ require("lazy").setup({
 			null_ls.setup({
 				sources = {
 					null_ls.builtins.formatting.stylua,
+					null_ls.builtins.formatting.clang_format,
 				},
 			})
 		end,
