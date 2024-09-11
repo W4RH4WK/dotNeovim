@@ -34,25 +34,19 @@ vim.keymap.set("n", "Q", "<Nop>")
 
 -- Basics
 vim.keymap.set("n", "<leader>q", "<cmd>%s/\\s\\+$//<cr>:noh<cr>", { desc = "Remove trailing whitespace" })
-vim.keymap.set("n", "<leader>w", "<cmd>w<cr>")
-vim.keymap.set("n", "<leader>h", "<cmd>noh<cr>")
-vim.keymap.set("v", "@", "<cmd>normal @", { silent = true })
+vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
+vim.keymap.set("n", "<leader>h", "<cmd>noh<cr>", { desc = "Clear highlight" })
+vim.keymap.set("v", "@", "<cmd>normal @", { silent = true, desc = "Replay macro" })
 vim.keymap.set("v", "p", "P", { noremap = true, silent = true }) -- Don't yank on paste
-vim.keymap.set(
-	"n",
-	"yof",
-	function()
-		if vim.opt_local.formatoptions:get().a then
-			vim.opt_local.formatoptions:remove("a")
-			print("Auto wordwrap disabled")
-		else
-			vim.opt_local.formatoptions:append("a")
-			print("Auto wordwrap enabled")
-		end
-	end,
-	-- ':<c-u>setlocal <c-r>=(&formatoptions =~# "a") ? "formatoptions-=a" : "formatoptions+=a"<cr><cr>',
-	{ desc = "Toggle auto wordwrap" }
-)
+vim.keymap.set("n", "yof", function()
+	if vim.opt_local.formatoptions:get().a then
+		vim.opt_local.formatoptions:remove("a")
+		print("Auto wordwrap disabled")
+	else
+		vim.opt_local.formatoptions:append("a")
+		print("Auto wordwrap enabled")
+	end
+end, { desc = "Toggle auto wordwrap" })
 
 -- Window movement
 vim.keymap.set("n", "<c-h>", "<c-w>h")
@@ -131,13 +125,15 @@ require("lazy").setup({
 		dependencies = { "afreakk/unimpaired-which-key.nvim" },
 		config = function()
 			local wk = require("which-key")
-			local uwk = require("unimpaired-which-key")
 			wk.setup({
-				window = { padding = { 0, 0, 0, 0 } },
-				layout = { align = "center" },
+				preset = "helix",
+				delay = 1000,
+				win = {
+					padding = { 1, 1 },
+					border = "none",
+				},
 			})
-			wk.register(uwk.normal_mode)
-			wk.register(uwk.normal_and_visual_mode, { mode = { "n", "v" } })
+			wk.add(require("unimpaired-which-key"))
 		end,
 	},
 
@@ -197,22 +193,22 @@ require("lazy").setup({
 			})
 			require("telescope").load_extension("fzy_native")
 			builtins = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>r", builtins.resume)
-			vim.keymap.set("n", "<leader>d", builtins.buffers)
-			vim.keymap.set("n", "<leader>f", builtins.find_files)
+			vim.keymap.set("n", "<leader>r", builtins.resume, { desc = "Telescope resume" })
+			vim.keymap.set("n", "<leader>d", builtins.buffers, { desc = "Goto buffer" })
+			vim.keymap.set("n", "<leader>f", builtins.find_files, { desc = "Goto file" })
 			vim.keymap.set("n", "<leader>F", function()
 				builtins.find_files({ hidden = true, no_ignore = true })
-			end)
-			vim.keymap.set("n", "<leader>s", builtins.live_grep)
-			vim.keymap.set("n", "<leader>S", builtins.grep_string)
-			vim.keymap.set("n", "<leader>g", builtins.git_files)
-			vim.keymap.set("n", "<leader>m", builtins.man_pages)
+			end, { desc = "Goto file (hidden)" })
+			vim.keymap.set("n", "<leader>s", builtins.live_grep, { desc = "Search in files" })
+			vim.keymap.set("n", "<leader>S", builtins.grep_string, { desc = "Search word in files" })
+			vim.keymap.set("n", "<leader>g", builtins.git_files, { desc = "Goto file (git)" })
+			vim.keymap.set("n", "<leader>m", builtins.man_pages, { desc = "Goto man-page" })
 			vim.keymap.set("n", "<leader>n", function()
 				builtins.find_files({ cwd = "~/git/notes" })
-			end)
+			end, { desc = "Goto notes" })
 			vim.keymap.set("n", "<leader>N", function()
 				builtins.live_grep({ cwd = "~/git/notes" })
-			end)
+			end, { desc = "Search in notes" })
 		end,
 	},
 
