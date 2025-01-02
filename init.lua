@@ -35,6 +35,7 @@ vim.keymap.set("n", "Q", "<Nop>")
 -- Basics
 vim.keymap.set("n", "<leader>q", "<cmd>%s/\\s\\+$//<cr>:noh<cr>", { desc = "Remove trailing whitespace" })
 vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
+vim.keymap.set("n", "<leader>e", "<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>", { desc = "Build" })
 vim.keymap.set("n", "<leader>h", "<cmd>noh<cr>", { desc = "Clear highlight" })
 vim.keymap.set("v", "@", "<cmd>normal @", { silent = true, desc = "Replay macro" })
 vim.keymap.set("v", "p", "P", { noremap = true, silent = true }) -- Don't yank on paste
