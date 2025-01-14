@@ -1,3 +1,8 @@
+-- Functions
+function isTTY()
+	return vim.env.TERM == "linux"
+end
+
 -- Visual
 vim.opt.cursorline = true
 vim.opt.guicursor = ""
@@ -5,7 +10,7 @@ vim.opt.linebreak = true
 vim.opt.listchars:append({ tab = "» ", eol = "¬", trail = "·" })
 vim.opt.scrolloff = 6
 vim.opt.showmode = false
-vim.opt.termguicolors = true
+vim.opt.termguicolors = not isTTY()
 vim.opt.wrap = false
 
 -- Handling
@@ -55,12 +60,15 @@ vim.keymap.set("n", "<c-h>", "<c-w>h")
 vim.keymap.set("n", "<c-j>", "<c-w>j")
 vim.keymap.set("n", "<c-k>", "<c-w>k")
 vim.keymap.set("n", "<c-l>", "<c-w>l")
+vim.keymap.set("n", "<leader>`", "<c-6>", { desc = "Prev buffer" })
 
 -- Code movement
-vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv")
-vim.keymap.set("v", ">", ">gv")
-vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move lines down" })
+vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move lines up" })
+vim.keymap.set("v", "H", "<gv", { desc = "Move lines left" })
+vim.keymap.set("v", "L", ">gv", { desc = "Move lines right" })
+vim.keymap.set("v", ">", ">gv", { desc = "Move lines left" })
+vim.keymap.set("v", "<", "<gv", { desc = "Move lines right" })
 
 -- Search movement
 vim.keymap.set("n", "n", "nzzzv")
@@ -204,6 +212,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>S", builtins.grep_string, { desc = "Search word in files" })
 			vim.keymap.set("n", "<leader>g", builtins.git_files, { desc = "Goto file (git)" })
 			vim.keymap.set("n", "<leader>m", builtins.man_pages, { desc = "Goto man-page" })
+			vim.keymap.set("n", "<leader><tab>", builtins.jumplist, { desc = "Goto jumplist" })
 			vim.keymap.set("n", "<leader>n", function()
 				builtins.find_files({ cwd = "~/git/notes" })
 			end, { desc = "Goto notes" })
