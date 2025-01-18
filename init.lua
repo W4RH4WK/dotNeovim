@@ -4,24 +4,16 @@ function isTTY()
 end
 
 -- Visual
-vim.opt.cursorline = true
 vim.opt.guicursor = ""
-vim.opt.linebreak = true
 vim.opt.listchars:append({ tab = "» ", eol = "¬", trail = "·" })
 vim.opt.scrolloff = 6
-vim.opt.showmode = false
+vim.opt.signcolumn = "no"
 vim.opt.termguicolors = not isTTY()
-vim.opt.wrap = false
 
 -- Handling
 vim.opt.autowrite = true
-vim.opt.formatoptions = vim.opt.formatoptions + "r"
-vim.opt.ignorecase = true
+vim.opt.completeopt = "menu,preview"
 vim.opt.joinspaces = false
-vim.opt.mouse = "a"
-vim.opt.smartcase = true
-vim.opt.splitbelow = true
-vim.opt.splitright = true
 vim.opt.swapfile = false
 vim.opt.switchbuf = "useopen,vsplit"
 vim.opt.wildignorecase = true
@@ -29,56 +21,23 @@ vim.opt.wildignorecase = true
 -- Indent
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.smartindent = true
 
 -- Leader
 vim.g.mapleader = " "
 
--- Disable Ex mode
-vim.keymap.set("n", "Q", "<Nop>")
-
 -- Basics
-vim.keymap.set("n", "<leader>q", "<cmd>%s/\\s\\+$//<cr>:noh<cr>", { desc = "Remove trailing whitespace" })
+vim.keymap.set("n", "<leader>q", "<cmd>%s/\\s\\+$//<cr>:noh<cr>", { desc = "Trim trailing whitespace" })
 vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
 vim.keymap.set("n", "<leader>e", "<cmd>w<cr><cmd>silent make<cr><cmd>cwindow<cr>", { desc = "Build" })
 vim.keymap.set("n", "<leader>h", "<cmd>noh<cr>", { desc = "Clear highlight" })
 vim.keymap.set("v", "@", "<cmd>normal @", { silent = true, desc = "Replay macro" })
-vim.keymap.set("v", "p", "P", { noremap = true, silent = true }) -- Don't yank on paste
-vim.keymap.set("n", "yof", function()
-	if vim.opt_local.formatoptions:get().a then
-		vim.opt_local.formatoptions:remove("a")
-		print("Auto wordwrap disabled")
-	else
-		vim.opt_local.formatoptions:append("a")
-		print("Auto wordwrap enabled")
-	end
-end, { desc = "Toggle auto wordwrap" })
 
--- Window movement
-vim.keymap.set("n", "<c-h>", "<c-w>h")
-vim.keymap.set("n", "<c-h>", "<c-w>h")
-vim.keymap.set("n", "<c-j>", "<c-w>j")
-vim.keymap.set("n", "<c-k>", "<c-w>k")
-vim.keymap.set("n", "<c-l>", "<c-w>l")
+-- Buffer switch
 vim.keymap.set("n", "<leader>`", "<c-6>", { desc = "Prev buffer" })
-
--- Code movement
-vim.keymap.set("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move lines down" })
-vim.keymap.set("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move lines up" })
-vim.keymap.set("v", "H", "<gv", { desc = "Move lines left" })
-vim.keymap.set("v", "L", ">gv", { desc = "Move lines right" })
-vim.keymap.set("v", ">", ">gv", { desc = "Move lines left" })
-vim.keymap.set("v", "<", "<gv", { desc = "Move lines right" })
 
 -- Search movement
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
-
--- System clipboard
-vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
-vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "Yank to system clipboard" })
-vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
-vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { desc = "Paste from system clipboard" })
 
 -- Encoding
 vim.opt.fileencodings = "ucs-bom,utf-8,cp932,default"
@@ -103,64 +62,94 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 		"clone",
 		"--filter=blob:none",
 		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable", -- latest stable release
+		"--branch=stable",
 		lazypath,
 	})
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.keymap.set("n", "<leader>L", "<cmd>Lazy<cr>")
+vim.keymap.set("n", "<leader>L", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 require("lazy").setup({
-	"chamindra/marvim",
-	"editorconfig/editorconfig-vim",
+	{
+		"rebelot/kanagawa.nvim",
+		config = function()
+			require("kanagawa").setup({
+				commentStyle = { italic = false },
+				keywordStyle = { italic = false },
+			})
+			vim.cmd("colorscheme kanagawa")
+		end,
+	},
+
+	"sheerun/vim-polyglot",
+	"nvim-treesitter/nvim-treesitter",
 	"maxbrunsfeld/vim-yankstack",
 	"mg979/vim-visual-multi",
-	"nvim-treesitter/nvim-treesitter",
-	"sheerun/vim-polyglot",
-	"tpope/vim-repeat",
-	"tpope/vim-surround",
-	"tpope/vim-unimpaired",
+	-- "tpope/vim-repeat",
+	"editorconfig/editorconfig-vim",
+
+	{
+		"echasnovski/mini.nvim",
+		config = function()
+			require("mini.basics").setup({
+				mappings = {
+					windows = true,
+					move_with_alt = true,
+				},
+			})
+
+			local miniclue = require("mini.clue")
+			miniclue.setup({
+				clues = {
+					miniclue.gen_clues.builtin_completion(),
+					miniclue.gen_clues.g(),
+					miniclue.gen_clues.marks(),
+					miniclue.gen_clues.registers(),
+					miniclue.gen_clues.windows(),
+					miniclue.gen_clues.z(),
+				},
+				triggers = {
+					{ mode = "x", keys = "<Leader>" },
+					{ mode = "n", keys = "<Leader>" },
+					{ mode = "x", keys = "<Leader>" },
+					{ mode = "i", keys = "<C-x>" },
+					{ mode = "n", keys = "g" },
+					{ mode = "x", keys = "g" },
+					{ mode = "n", keys = "'" },
+					{ mode = "n", keys = "`" },
+					{ mode = "x", keys = "'" },
+					{ mode = "x", keys = "`" },
+					{ mode = "n", keys = '"' },
+					{ mode = "x", keys = '"' },
+					{ mode = "i", keys = "<C-r>" },
+					{ mode = "c", keys = "<C-r>" },
+					{ mode = "n", keys = "<C-w>" },
+					{ mode = "n", keys = "z" },
+					{ mode = "x", keys = "z" },
+				},
+				window = {
+					config = {
+						width = "auto",
+					},
+				},
+			})
+
+			require("mini.ai").setup()
+			require("mini.align").setup()
+			require("mini.bracketed").setup()
+			require("mini.comment").setup()
+			require("mini.icons").setup()
+			require("mini.pairs").setup()
+			require("mini.statusline").setup()
+			require("mini.surround").setup()
+		end,
+	},
 
 	{
 		"farmergreg/vim-lastplace",
 		config = function()
 			vim.g.lastplace_ignore = "gitcommit"
-		end,
-	},
-
-	{
-		"folke/which-key.nvim",
-		dependencies = { "afreakk/unimpaired-which-key.nvim" },
-		config = function()
-			local wk = require("which-key")
-			wk.setup({
-				preset = "helix",
-				delay = 1000,
-				win = {
-					padding = { 1, 1 },
-					border = "none",
-				},
-			})
-			wk.add(require("unimpaired-which-key"))
-		end,
-	},
-
-	-- Visual
-
-	{
-		"jacoborus/tender.vim",
-		config = function()
-			vim.cmd([[colorscheme tender]])
-			vim.cmd([[hi Normal guifg=#eeeeee ctermfg=255 guibg=#1e1e1e ctermbg=234 gui=NONE cterm=NONE]])
-			vim.cmd([[hi VertSplit guifg=#3a3a3a ctermfg=237 guibg=#1e1e1e ctermbg=234]])
-		end,
-	},
-
-	{
-		"itchyny/lightline.vim",
-		config = function()
-			vim.g.lightline = { colorscheme = "wombat" }
 		end,
 	},
 
@@ -207,7 +196,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>f", builtins.find_files, { desc = "Goto file" })
 			vim.keymap.set("n", "<leader>F", function()
 				builtins.find_files({ hidden = true, no_ignore = true })
-			end, { desc = "Goto file (hidden)" })
+			end, { desc = "Goto file (all files)" })
 			vim.keymap.set("n", "<leader>s", builtins.live_grep, { desc = "Search in files" })
 			vim.keymap.set("n", "<leader>S", builtins.grep_string, { desc = "Search word in files" })
 			vim.keymap.set("n", "<leader>g", builtins.git_files, { desc = "Goto file (git)" })
@@ -230,12 +219,12 @@ require("lazy").setup({
 			local lspconfig = require("lspconfig")
 			local on_attach = function(client, bufnr)
 				local opts = { noremap = true, silent = true }
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "gI", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gI", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+				-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 			end
 		end,
 	},
