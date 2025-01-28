@@ -74,6 +74,9 @@ require("lazy").setup({
 	{
 		"rebelot/kanagawa.nvim",
 		config = function()
+			if isTTY() then
+				return
+			end
 			require("kanagawa").setup({
 				commentStyle = { italic = false },
 				keywordStyle = { italic = false },
