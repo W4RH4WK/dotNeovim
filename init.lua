@@ -86,8 +86,7 @@ require("lazy").setup({
 	},
 
 	"sheerun/vim-polyglot",
-	"nvim-treesitter/nvim-treesitter",
-	"maxbrunsfeld/vim-yankstack",
+	-- "maxbrunsfeld/vim-yankstack",
 	"mg979/vim-visual-multi",
 	-- "tpope/vim-repeat",
 	"editorconfig/editorconfig-vim",
@@ -211,6 +210,27 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>N", function()
 				builtins.live_grep({ cwd = "~/git/notes" })
 			end, { desc = "Search in notes" })
+		end,
+	},
+
+	-- Treesitter
+
+	{
+		"nvim-treesitter/nvim-treesitter",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"lua",
+					"vim",
+					"vimdoc",
+					"c",
+					"markdown",
+				},
+				highlight = {
+					enable = true,
+					additional_vim_regex_highlighting = { "markdown", "ruby" },
+				},
+			})
 		end,
 	},
 
