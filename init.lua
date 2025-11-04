@@ -136,11 +136,11 @@ require("lazy").setup({
 					},
 				},
 			})
-			require("mini.pairs").setup({
-				mappings = {
-					["`"] = false,
-				},
-			})
+			-- require("mini.pairs").setup({
+			-- 	mappings = {
+			-- 		["`"] = false,
+			-- 	},
+			-- })
 			require("mini.ai").setup()
 			require("mini.align").setup()
 			require("mini.bracketed").setup()
